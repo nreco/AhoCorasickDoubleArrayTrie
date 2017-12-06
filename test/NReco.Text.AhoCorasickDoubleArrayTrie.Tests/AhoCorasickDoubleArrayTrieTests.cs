@@ -85,6 +85,31 @@ namespace NReco.Text
 		}
 
 		[Fact]
+		public void testSaveLoad() {
+			var acdat = buildASimpleAhoCorasickDoubleArrayTrie("hers", "his", "she", "he");
+			var memStream = new MemoryStream();
+			acdat.Save(memStream, true);
+
+			WriteLine($"4 keywords, saved {memStream.Length} bytes");
+
+			var acdat2 = new AhoCorasickDoubleArrayTrie<string>();
+			memStream.Position = 0;
+			acdat2.Load(memStream);
+
+			Assert.Equal(acdat.Count, acdat2.Count);
+			Assert.Equal("his", acdat2["his"]);
+			validateASimpleAhoCorasickDoubleArrayTrie(acdat2, "uhers", new[] { "he", "hers" });
+
+			// large dictionary
+			var dictionary = loadDictionary("dictionary.txt");
+			var keywords = dictionary.Select(k => new KeyValuePair<string, string>(k, k));
+			var acdat3 = new AhoCorasickDoubleArrayTrie<string>(keywords);
+			var memStream2 = new MemoryStream();
+			acdat3.Save(memStream2, false);
+			WriteLine($"{dictionary.Count} keywords, saved {memStream2.Length} bytes (without values)");
+		}
+
+		[Fact]
 		public void testBuildAndParseWithBigFile() {
 			// Load test data from disk
 			var dictionary = loadDictionary("dictionary.txt");

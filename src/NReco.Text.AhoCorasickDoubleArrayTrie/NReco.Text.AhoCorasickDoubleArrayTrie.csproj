@@ -23,8 +23,20 @@
     <Reference Include="System" />
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+    <PackageReference Include="System.Data.Common" Version="4.1.0" />
+	<PackageReference Include="System.Reflection" Version="4.1.0" />
+    <PackageReference Include="System.Reflection.Primitives" Version="4.0.1" />	
+  </ItemGroup>
+  
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
     <DefineConstants>$(DefineConstants);NET_STANDARD</DefineConstants>
   </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.3|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
 
+  
+  
 </Project>

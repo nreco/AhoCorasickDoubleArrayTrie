@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace NReco.Text
@@ -134,32 +135,6 @@ namespace NReco.Text
 				}
 				++position;
 			}
-		}
-
-		/// <summary>
-		/// Save automata state into binary stream.
-		/// </summary>
-		public void Save(Stream input, bool saveValues) {
-			throw new NotImplementedException();
-			/*out.writeObject(base);
-			out.writeObject(check);
-			out.writeObject(fail);
-			out.writeObject(output);
-			out.writeObject(l);
-			out.writeObject(v);*/
-		}
-
-		/// <summary>
-		/// Load automata state from specified binary stream.
-		/// </summary>
-		public void Load(Stream input, bool loadValues) {
-			throw new NotImplementedException();
-			/*base = (int[]) in.readObject();
-			check = (int[]) in.readObject();
-			fail = (int[]) in.readObject();
-			output = (int[][]) in.readObject();
-			l = (int[]) in.readObject();
-			v = (V[]) in.readObject();*/
 		}
 
 		/// <summary>
@@ -289,8 +264,243 @@ namespace NReco.Text
 			return result;
 		}
 
-	}
 
+		/// <summary>
+		/// Save automata state into binary stream.
+		/// </summary>
+		public void Save(Stream output, bool saveValues) {
+
+			var binWr = new Write7BitEncodedBinaryWriter(output);
+			binWr.Write((byte)2); // number of single-value props
+			binWr.Write("saveValues");
+			binWr.Write(saveValues);
+			binWr.Write("size");
+			binWr.Write(size);
+
+			binWr.WriteIntArray(l);
+			binWr.WriteIntArray(@base);
+			binWr.WriteIntArray(check);
+			binWr.WriteIntArray(fail);
+			binWr.WriteIntIntArray(this.output);
+
+			if (saveValues) {
+				var vType = typeof(V);
+				var typeCode = GetTypeCode(vType);
+				Action<Write7BitEncodedBinaryWriter, object> wrElem;
+				if (typeCode!=TypeCode.Object && (int)typeCode< Write7BitEncodedBinaryWriter.TypeCodeWriters.Length) {
+					wrElem = Write7BitEncodedBinaryWriter.TypeCodeWriters[(int)typeCode];
+				} else {
+					throw new NotSupportedException(String.Format("Cannot write values of type '{0}', only primitive types are supported.", vType));
+				}
+				binWr.Write7BitEncodedInt(v.Length);
+				for (int i = 0; i < v.Length; i++) {
+					wrElem(binWr, (object)v[i]);
+				}
+			}
+			/*out.writeObject(base);
+			out.writeObject(check);
+			out.writeObject(fail);
+			out.writeObject(output);
+			out.writeObject(l);
+			out.writeObject(v);*/
+		}
+
+		/// <summary>
+		/// Load automata state from specified binary stream.
+		/// </summary>
+		public void Load(Stream input) {
+			var binRdr = new Read7BitEncodedBinaryReader(input);
+			var loadValues = true;
+
+			var propsCount = binRdr.ReadByte();
+			for (byte i = 0; i < propsCount; i++) {
+				var propName = binRdr.ReadString();
+				switch (propName) {
+					case "saveValues":
+						loadValues = binRdr.ReadBoolean();
+						break;
+					case "size":
+						size = binRdr.ReadInt32();
+						break;
+				}
+			}
+
+			this.l = binRdr.ReadIntArray();
+			this.@base = binRdr.ReadIntArray();
+			this.check = binRdr.ReadIntArray();
+			this.fail = binRdr.ReadIntArray();
+			this.output = binRdr.ReadIntIntArray();
+
+			if (loadValues) {
+				var vType = typeof(V);
+				var typeCode = GetTypeCode(vType);
+				Func<Read7BitEncodedBinaryReader, object> readElem;
+				if (typeCode != TypeCode.Object && (int)typeCode < Read7BitEncodedBinaryReader.TypeCodeReaders.Length) {
+					readElem = Read7BitEncodedBinaryReader.TypeCodeReaders[(int)typeCode];
+				} else {
+					throw new NotSupportedException(String.Format("Cannot read values of type '{0}', only primitive types are supported.", vType));
+				}
+				var vLen = binRdr.Read7BitEncodedInt();
+				this.v = new V[vLen];
+				for (int i = 0; i < v.Length; i++) {
+					v[i] = (V)readElem(binRdr);
+				}
+			}
+
+		}
+
+		private bool IsValueType(Type type) {
+#if NET_STANDARD
+			return type.GetTypeInfo().IsValueType;
+#else
+			return type.IsValueType;
+#endif
+		}
+
+		private TypeCode GetTypeCode(Type type) {
+#if NET_STANDARD
+			if (type == null) {
+				return TypeCode.Empty;
+			} else if (type == typeof(Boolean)) {
+				return TypeCode.Boolean;
+			} else if (type == typeof(Char)) {
+				return TypeCode.Char;
+			} else if (type == typeof(SByte)) {
+				return TypeCode.SByte;
+			} else if (type == typeof(Byte)) {
+				return TypeCode.Byte;
+			} else if (type == typeof(Int16)) {
+				return TypeCode.Int16;
+			} else if (type == typeof(UInt16)) {
+				return TypeCode.UInt16;
+			} else if (type == typeof(Int32)) {
+				return TypeCode.Int32;
+			} else if (type == typeof(UInt32)) {
+				return TypeCode.UInt32;
+			} else if (type == typeof(Int64)) {
+				return TypeCode.Int64;
+			} else if (type == typeof(UInt64)) {
+				return TypeCode.UInt64;
+			} else if (type == typeof(Single)) {
+				return TypeCode.Single;
+			} else if (type == typeof(Double)) {
+				return TypeCode.Double;
+			} else if (type == typeof(Decimal)) {
+				return TypeCode.Decimal;
+			} else if (type == typeof(DateTime)) {
+				return TypeCode.DateTime;
+			} else if (type == typeof(String)) {
+				return TypeCode.String;
+			} else {
+				return TypeCode.Object;
+			}
+#else
+			return Type.GetTypeCode(type);
+#endif
+		}
+
+		internal class Read7BitEncodedBinaryReader : BinaryReader {
+			public Read7BitEncodedBinaryReader(Stream stream) : base(stream) { }
+
+			public new int Read7BitEncodedInt() {
+				return base.Read7BitEncodedInt();
+			}
+
+			public int[] ReadIntArray() {
+				var arrLen = base.Read7BitEncodedInt();
+				if (arrLen < 0)
+					return null;
+				var arr = new int[arrLen];
+				for (int i = 0; i < arr.Length; i++) {
+					arr[i] = base.Read7BitEncodedInt();
+				}
+				return arr;
+			}
+
+			public int[][] ReadIntIntArray() {
+				var arrLen = base.Read7BitEncodedInt();
+				var arr = new int[arrLen][];
+				for (int i = 0; i < arr.Length; i++) {
+					arr[i] = ReadIntArray();
+				}
+				return arr;
+			}
+
+			internal static readonly Func<Read7BitEncodedBinaryReader, object>[] TypeCodeReaders = new Func<Read7BitEncodedBinaryReader, object>[] {
+				(rdr) => { return null; }, // null
+				(rdr) => { throw new NotSupportedException(); }, // read object!! 
+				(rdr) => { return DBNull.Value; }, // dbnull
+				(rdr) => { return rdr.ReadBoolean(); },
+				(rdr) => { return rdr.ReadChar(); },
+				(rdr) => { return rdr.ReadSByte(); },
+				(rdr) => { return rdr.ReadByte(); },
+				(rdr) => { return rdr.ReadInt16(); },
+				(rdr) => { return rdr.ReadUInt16(); },
+				(rdr) => { return rdr.ReadInt32(); },
+				(rdr) => { return rdr.ReadUInt32(); },
+				(rdr) => { return rdr.ReadInt64(); },
+				(rdr) => { return rdr.ReadUInt64(); },
+				(rdr) => { return rdr.ReadSingle(); },
+				(rdr) => { return rdr.ReadDouble(); },
+				(rdr) => { return rdr.ReadDecimal(); },
+				(rdr) => { return DateTime.FromBinary(rdr.ReadInt64()); },
+				(rdr) => { return null; }, // 17 - not used typecode
+				(rdr) => { return rdr.ReadString(); },
+			};
+
+		}
+
+		internal class Write7BitEncodedBinaryWriter : BinaryWriter {
+			public Write7BitEncodedBinaryWriter(Stream stream) : base(stream) { }
+
+			public new void Write7BitEncodedInt(int i) {
+				base.Write7BitEncodedInt(i);
+			}
+
+			public void WriteIntArray(int[] arr) {
+				if (arr==null) {
+					base.Write7BitEncodedInt(-1);
+					return;
+				}
+				base.Write7BitEncodedInt(arr.Length);
+				for (long i = 0; i < arr.Length; i++) {
+					base.Write7BitEncodedInt(arr[i]);
+				}
+			}
+
+			public void WriteIntIntArray(int[][] arr) {
+				base.Write7BitEncodedInt(arr.Length);
+				for (int i = 0; i < arr.Length; i++) {
+					WriteIntArray(arr[i]);
+				}
+			}
+
+			internal static readonly Action<Write7BitEncodedBinaryWriter, object>[] TypeCodeWriters = new Action<Write7BitEncodedBinaryWriter, object>[] {
+				(wr,o) => { },
+				(wr,o) => { throw new NotSupportedException(); }, //write object
+				(wr,o) => { },
+				(wr,o) => { wr.Write( (bool)o ); },
+				(wr,o) => { wr.Write( (char)o ); },
+				(wr,o) => { wr.Write( (sbyte)o ); },
+				(wr,o) => { wr.Write( (byte)o ); },
+				(wr,o) => { wr.Write( (short)o ); },
+				(wr,o) => { wr.Write( (ushort)o ); },
+				(wr,o) => { wr.Write( (int)o ); },
+				(wr,o) => { wr.Write( (uint)o ); },
+				(wr,o) => { wr.Write( (long)o ); },
+				(wr,o) => { wr.Write( (ulong)o ); },
+				(wr,o) => { wr.Write( (float)o ); },
+				(wr,o) => { wr.Write( (double)o ); },
+				(wr,o) => { wr.Write( (decimal)o ); },
+				(wr,o) => { wr.Write( ((DateTime)o).ToBinary() ); },
+				(wr,o) => { }, // 17 - not used typecode
+				(wr,o) => { wr.Write(Convert.ToString(o)); }
+			};
+
+		}
+
+
+	}
 
 
 }
