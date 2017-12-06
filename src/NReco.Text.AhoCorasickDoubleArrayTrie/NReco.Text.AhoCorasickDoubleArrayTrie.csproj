@@ -10,7 +10,6 @@
     <TargetFrameworks>netstandard1.3;net45</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>NReco.Text.AhoCorasickDoubleArrayTrie</AssemblyName>
-    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <PackageId>NReco.Text.AhoCorasickDoubleArrayTrie</PackageId>
     <PackageTags>aho-corasick;double-array;trie;string;search;fast-substring;net45;netstandard;netcore</PackageTags>
     <PackageIconUrl>https://www.nrecosite.com/img/nreco-logo-200.png</PackageIconUrl>
@@ -18,8 +17,6 @@
     <PackageLicenseUrl>https://raw.githubusercontent.com/nreco/AhoCorasickDoubleArrayTrie/master/LICENSE</PackageLicenseUrl>
     <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.3' ">1.6.0</NetStandardImplicitPackageVersion>
     <RootNamespace>NReco.Text</RootNamespace>
-    <SignAssembly>false</SignAssembly>
-    <AssemblyOriginatorKeyFile>NReco.Text.AhoCorasickDoubleArrayTrie.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
