@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>NReco.Text.AhoCorasickDoubleArrayTrie.Tests</AssemblyName>
+    <PackageId>NReco.Text.AhoCorasickDoubleArrayTrie.Tests</PackageId>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <DebugType>portable</DebugType>
+    <RootNamespace>NReco.Text</RootNamespace>	
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="testdata\dictionary.txt" />
+    <None Remove="testdata\text.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="testdata\dictionary.txt" />
+    <EmbeddedResource Include="testdata\text.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\NReco.Text.AhoCorasickDoubleArrayTrie\NReco.Text.AhoCorasickDoubleArrayTrie.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+    <PackageReference Include="xunit" Version="2.3.1" />
+  </ItemGroup>
+
+</Project>

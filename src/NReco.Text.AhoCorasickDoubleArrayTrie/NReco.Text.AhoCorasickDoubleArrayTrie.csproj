@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Very fast C# implementation of Aho Corasick algorithm based on Double Array Trie: efficient text search of many substrings with O(n) complexity. Automata state may be efficiently serialized to binary stream.</Description>
+    <Copyright>Copyright (c) 2017 Vitalii Fedorchenko</Copyright>
+    <AssemblyTitle>NReco.Text.AhoCorasickDoubleArrayTrie</AssemblyTitle>
+	<Title>Fast Aho Corasick algorithm based on Double Array Trie.</Title>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <Authors>Vitalii Fedorchenko</Authors>
+    <TargetFrameworks>netstandard1.3;net45</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyName>NReco.Text.AhoCorasickDoubleArrayTrie</AssemblyName>
+    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+    <PackageId>NReco.Text.AhoCorasickDoubleArrayTrie</PackageId>
+    <PackageTags>aho-corasick;double-array;trie;string;search;fast-substring;net45;netstandard;netcore</PackageTags>
+    <PackageIconUrl>https://www.nrecosite.com/img/nreco-logo-200.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/nreco/AhoCorasickDoubleArrayTrie</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/nreco/AhoCorasickDoubleArrayTrie/master/LICENSE</PackageLicenseUrl>
+    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.3' ">1.6.0</NetStandardImplicitPackageVersion>
+    <RootNamespace>NReco.Text</RootNamespace>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>NReco.Text.AhoCorasickDoubleArrayTrie.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Reference Include="System" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+    <DefineConstants>$(DefineConstants);NET_STANDARD</DefineConstants>
+  </PropertyGroup>
+
+</Project>
