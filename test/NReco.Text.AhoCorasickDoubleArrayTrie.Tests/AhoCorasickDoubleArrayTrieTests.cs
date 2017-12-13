@@ -128,6 +128,34 @@ namespace NReco.Text
 		}
 
 		[Fact]
+		public void testParseCharArray() {
+			var chars = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.".ToCharArray();
+			var keywords = new[] { "dolor", "it" };
+
+
+			var acdat = new AhoCorasickDoubleArrayTrie<string>(keywords.Select( (k,i) => new KeyValuePair<string, string>(k,i.ToString()) ));
+			var collectedValues = new List<string>();
+			acdat.ParseText(chars, hit => { collectedValues.Add(hit.Value); return true; });
+			AssertSeqEqual(new[] { "0", "1", "1", "0" }, collectedValues);
+
+			var collectedValues2 = new List<string>();
+			acdat.ParseText(chars, 14, 10, hit => { collectedValues2.Add(hit.Value); return true; });
+			AssertSeqEqual(new[] { "1" }, collectedValues2);
+		}
+
+		[Fact]
+		public void testCaseInsensitive() {
+			var text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+			var keywords = new[] { "doLor", "iT" };
+
+			var acdat = new AhoCorasickDoubleArrayTrie<string>();
+			acdat.Build(keywords.Select((k, i) => new KeyValuePair<string, string>(k, i.ToString())), true);
+			var collectedValues = new List<string>();
+			acdat.ParseText(text, hit => { collectedValues.Add(hit.Value); return true; });
+			AssertSeqEqual(new[] { "0", "1", "1", "0" }, collectedValues);
+		}
+
+		[Fact]
 		public void testCancellation() {
 			// Collect test data set
 			var map = new Dictionary<String, String>() {
@@ -162,7 +190,7 @@ namespace NReco.Text
 			}
 
 			var swBuild = new Stopwatch();
-			ahoCorasickDoubleArrayTrie.Build(dictionaryMap);
+			ahoCorasickDoubleArrayTrie.Build(dictionaryMap, true);
 			swBuild.Stop();
 			WriteLine("Automata build time: {0}ms.\n", swBuild.ElapsedMilliseconds);
 

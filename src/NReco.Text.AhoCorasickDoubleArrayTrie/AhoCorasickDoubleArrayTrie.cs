@@ -60,12 +60,17 @@ namespace NReco.Text
 		/// </summary>
 		protected int size;
 
+		protected bool ignoreCase = false;
+
 		public AhoCorasickDoubleArrayTrie() {
 
 		}
 
-		public AhoCorasickDoubleArrayTrie(IEnumerable<KeyValuePair<string,V>> keywords) {
-			Build(keywords);
+		public AhoCorasickDoubleArrayTrie(IEnumerable<KeyValuePair<string, V>> keywords) : this(keywords, false) {
+		}
+
+		public AhoCorasickDoubleArrayTrie(IEnumerable<KeyValuePair<string,V>> keywords, bool ignoreCase) {
+			Build(keywords, ignoreCase);
 		}
 
 		/// <summary>
@@ -90,8 +95,13 @@ namespace NReco.Text
 		public void ParseText(string text, Func<Hit,bool> processor) {
 			int position = 1;
 			int currentState = 0;
+			bool ignoreCase = this.ignoreCase;
+			char c;
 			for (int chIdx = 0; chIdx < text.Length; ++chIdx) {
-				currentState = getState(currentState, text[chIdx]);
+				c = text[chIdx];
+				if (ignoreCase)
+					c = ToLowerCase(c);
+				currentState = getState(currentState, c);
 				int[] hitArray = output[currentState];
 				if (hitArray != null) {
 					for (int i = 0; i < hitArray.Length; i++) {
@@ -110,31 +120,59 @@ namespace NReco.Text
 		/// </summary>
 		/// <param name="text">The text.</param>
 		/// <param name="processor">A processor which handles matches.</param>
-		public void ParseText(String text, Action<Hit> processor) {
+		public void ParseText(string text, Action<Hit> processor) {
 			ParseText(text, (hit) => { processor(hit); return true; });
 		}
 
 		/// <summary>
 		/// Parse text represented as char array.
 		/// </summary>
-		/// <param name="text">The text</param>
+		/// <param name="text">The text represented by a char array</param>
 		/// <param name="processor">A processor which handles matches (returns 'continue' flag).</param>
 		public void ParseText(char[] text, Func<Hit, bool> processor) {
+			ParseText(text, 0, text.Length, processor);
+		}
+
+		/// <summary>
+		/// Parse text in a char array buffer.
+		/// </summary>
+		/// <param name="text">char array buffer.</param>
+		/// <param name="start">text start position.</param>
+		/// <param name="length">text length in the char array.</param>
+		/// <param name="processor">A processor which handles matches (returns 'continue' flag).</param>
+		public void ParseText(char[] text, int start, int length, Func<Hit, bool> processor) {
 			int position = 1;
 			int currentState = 0;
-			for (int chIdx=0; chIdx < text.Length; chIdx++) {
-				char c = text[chIdx];
+			char c;
+			int[] hitArray;
+			int end = start + length;
+			for (int chIdx = start; chIdx < end; chIdx++) {
+				c = text[chIdx];
+				if (ignoreCase)
+					c = ToLowerCase(c);
 				currentState = getState(currentState, c);
-				int[] hitArray = output[currentState];
+				hitArray = output[currentState];
 				if (hitArray != null) {
-					for (int i=0; i<hitArray.Length; i++) {
+					for (int i = 0; i < hitArray.Length; i++) {
 						var hit = hitArray[i];
-						if (!processor( new Hit( position - l[hit], position, v[hit], hit ) ))
+						if (!processor(new Hit(position - l[hit], position, v[hit], hit)))
 							return;
 					}
 				}
 				++position;
 			}
+		}
+
+		char ToLowerCase(char ch) {
+			if (ch < '\u0080') {
+				// this is ascii char
+				if ('A' <= ch && ch <= 'Z') {
+					ch |= ' ';
+				}
+			} else {
+				ch = Char.ToLowerInvariant(ch);
+			}
+			return ch;
 		}
 
 		/// <summary>
@@ -188,17 +226,12 @@ namespace NReco.Text
 		/// transition of a state
 		/// </summary>
 		protected int transition(int current, char c) {
-			int b = current;
-			int p;
-
-			p = b + c + 1;
-			if (b == check[p])
-				b = @base[p];
+			//int b = current;
+			int p = current + c + 1; // b + c + 1
+			if (current == check[p])
+				return @base[p];
 			else
 				return -1;
-
-			p = b;
-			return p;
 		}
 
 		/// <summary>
@@ -217,11 +250,22 @@ namespace NReco.Text
 			return p;
 		}
 
+		IEnumerable<KeyValuePair<string,V>> ToLowerCase(IEnumerable<KeyValuePair<string, V>> input) {
+			var enumerator = input.GetEnumerator();
+			while (enumerator.MoveNext()) {
+				yield return new KeyValuePair<string, V>(enumerator.Current.Key.ToLowerInvariant(), enumerator.Current.Value);
+			}
+		}
+
 		/// <summary>
 		/// Build a AhoCorasickDoubleArrayTrie from a sequence of string key -> value pairs.
 		/// </summary>
-		public void Build(IEnumerable<KeyValuePair<String, V>> map) {
-			new Builder(this).build(map);
+		public void Build(IEnumerable<KeyValuePair<string, V>> input, bool ignoreCase = false) {
+			this.ignoreCase = ignoreCase;
+			if (ignoreCase) {
+				input = ToLowerCase(input);
+			}
+			new Builder(this).Build(input);
 		}
 
 		/// <summary>
@@ -271,11 +315,13 @@ namespace NReco.Text
 		public void Save(Stream output, bool saveValues) {
 
 			var binWr = new Write7BitEncodedBinaryWriter(output);
-			binWr.Write((byte)2); // number of single-value props
+			binWr.Write((byte)3); // number of single-value props
 			binWr.Write("saveValues");
 			binWr.Write(saveValues);
 			binWr.Write("size");
 			binWr.Write(size);
+			binWr.Write("ignoreCase");
+			binWr.Write(ignoreCase);
 
 			binWr.WriteIntArray(l);
 			binWr.WriteIntArray(@base);
@@ -297,12 +343,6 @@ namespace NReco.Text
 					wrElem(binWr, (object)v[i]);
 				}
 			}
-			/*out.writeObject(base);
-			out.writeObject(check);
-			out.writeObject(fail);
-			out.writeObject(output);
-			out.writeObject(l);
-			out.writeObject(v);*/
 		}
 
 		/// <summary>
@@ -321,6 +361,9 @@ namespace NReco.Text
 						break;
 					case "size":
 						size = binRdr.ReadInt32();
+						break;
+					case "ignoreCase":
+						ignoreCase = binRdr.ReadBoolean();
 						break;
 				}
 			}

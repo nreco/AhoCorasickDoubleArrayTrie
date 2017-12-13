@@ -8,6 +8,7 @@ NuGet | Ubuntu 14.04
 * very fast: can be used for efficient substring search of thousands keywords with O(n) complexity.
 * trie represented with double array approach to minimize memory usage
 * automata state can be effectively saved/loaded to binary stream (say, file)
+* supports case-insensitive search
 
 ## How to use
 ```

@@ -48,7 +48,7 @@ namespace NReco.Text
 				this.trie = trie;
 			}
 
-			public void build(IEnumerable<KeyValuePair<string, V>> input) {
+			internal void Build(IEnumerable<KeyValuePair<string, V>> input) {
 				addAllKeyword(input);
 				buildDoubleArrayTrie(trie.v.Length);
 				used = null;

@@ -5,9 +5,9 @@
     <Copyright>Copyright (c) 2017 Vitalii Fedorchenko</Copyright>
     <AssemblyTitle>NReco.Text.AhoCorasickDoubleArrayTrie</AssemblyTitle>
 	<Title>Fast Aho Corasick algorithm based on Double Array Trie.</Title>
-    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionPrefix>1.0.1</VersionPrefix>
     <Authors>Vitalii Fedorchenko</Authors>
-    <TargetFrameworks>netstandard1.3;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;net40</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>NReco.Text.AhoCorasickDoubleArrayTrie</AssemblyName>
     <PackageId>NReco.Text.AhoCorasickDoubleArrayTrie</PackageId>
@@ -19,7 +19,7 @@
     <RootNamespace>NReco.Text</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
     <Reference Include="System" />
   </ItemGroup>
 
