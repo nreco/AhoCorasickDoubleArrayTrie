@@ -106,8 +106,9 @@ namespace NReco.Text
 				if (hitArray != null) {
 					for (int i = 0; i < hitArray.Length; i++) {
 						var hit = hitArray[i];
-						// begin, end, value
-						if (!processor(new Hit(position - l[hit], position, v[hit], hit)))
+                        // begin, end, value
+                        V value = v == null ? default(V) : v[hit];
+						if (!processor(new Hit(position - l[hit], position, value, hit)))
 							return;
 					}
 				}
