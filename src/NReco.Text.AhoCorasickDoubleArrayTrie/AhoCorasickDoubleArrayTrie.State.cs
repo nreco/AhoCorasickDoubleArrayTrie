@@ -29,7 +29,7 @@ namespace NReco.Text
 
 			private ISet<int> emits = null;
 
-			private Dictionary<char, State> success = new Dictionary<char, State>();
+			private IDictionary<char, State> success = new SortedDictionary<char, State>();
 
 			private int index;
 
@@ -131,7 +131,7 @@ namespace NReco.Text
 				return sb.ToString();
 			}
 
-			public Dictionary<char, State> getSuccess() {
+			public IDictionary<char, State> getSuccess() {
 				return success;
 			}
 

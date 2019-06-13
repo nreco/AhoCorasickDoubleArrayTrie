@@ -166,10 +166,7 @@ namespace NReco.Text
 				progress = 0;
 				this.keySize = keySize;
 
-				int totalKeysLen = 0;
-				for (int i = 0; i < trie.l.Length; i++)
-					totalKeysLen += trie.l[i];
-				resize(65536 + totalKeysLen*2 + 1);  // originally was 65536*32  -- it seems too large in most cases
+				resize(65536 * 32);
 
 				trie.@base[0] = 1;
 				nextCheckPos = 0;
