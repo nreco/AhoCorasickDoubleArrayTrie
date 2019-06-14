@@ -107,6 +107,22 @@ namespace NReco.Text
 			var memStream2 = new MemoryStream();
 			acdat3.Save(memStream2, false);
 			WriteLine($"{dictionary.Count} keywords, saved {memStream2.Length} bytes (without values)");
+
+			// save without values
+			acdat = buildASimpleAhoCorasickDoubleArrayTrie("hers", "his", "she", "he");
+			var memStream3 = new MemoryStream();
+			acdat.Save(memStream3, false);
+			acdat2 = new AhoCorasickDoubleArrayTrie<string>();
+			memStream3.Position = 0;
+			acdat2.Load(memStream3);
+			acdat2.ParseText("uhers", (hit) => {
+				Assert.Null(hit.Value); // values not loaded
+			});
+			memStream3.Position = 0;
+			acdat2.Load(memStream3, (idx) => {
+				return new[] { "hers", "his", "she", "he" }[idx];
+			});
+			validateASimpleAhoCorasickDoubleArrayTrie(acdat2, "uhers", new[] { "he", "hers" });
 		}
 
 		[Fact]

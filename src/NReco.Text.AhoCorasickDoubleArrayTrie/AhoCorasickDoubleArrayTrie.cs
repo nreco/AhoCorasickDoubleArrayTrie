@@ -389,8 +389,22 @@ namespace NReco.Text
 				for (int i = 0; i < v.Length; i++) {
 					v[i] = (V)readElem(binRdr);
 				}
+			} else {
+				this.v = null;
 			}
 
+		}
+
+		/// <summary>
+		/// Load automata state from specified binary stream. If values are not saved specified handler is used to restore them.
+		/// </summary>
+		public void Load(Stream input, Func<int, V> loadValueHandler) {
+			Load(input);
+			if (this.v==null && loadValueHandler!=null) {
+				this.v = new V[this.l.Length];
+				for (int i = 0; i < this.l.Length; i++)
+					this.v[i] = loadValueHandler(i);
+			}
 		}
 
 		private bool IsValueType(Type type) {
