@@ -32,4 +32,4 @@ matcher.ParseText(text, (hit) => {
 Licensed under the Apache License, Version 2.0 (see LICENSE file).
 
 This C# implementation is a port of hankcs's https://github.com/hankcs/AhoCorasickDoubleArrayTrie (java) that were licensed under the Apache 2.0 License (see http://www.apache.org/licenses/LICENSE-2.0).
-Copyright 2017 Vitaliy Fedorchenko (port to C#, improvements)
+Copyright 2017-2019 Vitaliy Fedorchenko (port to C#, improvements) and contributors
