@@ -4,50 +4,44 @@
     <Description>Very fast C# implementation of Aho Corasick algorithm based on Double Array Trie: efficient text search of many substrings with O(n) complexity. Automata state may be efficiently serialized to binary stream.</Description>
     <Copyright>Copyright (c) 2017-2019 Vitalii Fedorchenko</Copyright>
     <AssemblyTitle>NReco.Text.AhoCorasickDoubleArrayTrie</AssemblyTitle>
-	<Title>Fast Aho Corasick algorithm based on Double Array Trie.</Title>
+    <Title>Fast Aho Corasick algorithm based on Double Array Trie.</Title>
     <VersionPrefix>1.0.2</VersionPrefix>
     <Authors>Vitalii Fedorchenko</Authors>
-    <TargetFrameworks>netstandard1.3;net40</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>NReco.Text.AhoCorasickDoubleArrayTrie</AssemblyName>
     <AssemblyOriginatorKeyFile>NReco.Text.AhoCorasickDoubleArrayTrie.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>False</SignAssembly>	
+    <SignAssembly>False</SignAssembly>
     <PackageId>NReco.Text.AhoCorasickDoubleArrayTrie</PackageId>
     <PackageTags>aho-corasick;AhoCorasick;double-array;trie;string;search;fast-substring;netstandard;netcore</PackageTags>
-	<PackageReleaseNotes>How to use: 
+    <PackageReleaseNotes>How to use:
 
-var keywords = new Dictionary&lt;string,int&gt;() { {"are", 1},  {"is", 1}, {"he", 2}, {"she", 2}, {"it", 2}, {"we", 2} }; 
-var matcher = new AhoCorasickDoubleArrayTrie&lt;int&gt;( keywords ); 
-var text = "we are all champions"; 
-matcher.ParseText(text, (hit) =&gt; { 
-  Console.WriteLine("Matched: {0} = {1}", text.Substring(hit.Begin, hit.Length), hit.Value ); 
+var keywords = new Dictionary&lt;string,int&gt;() { {"are", 1},  {"is", 1}, {"he", 2}, {"she", 2}, {"it", 2}, {"we", 2} };
+var matcher = new AhoCorasickDoubleArrayTrie&lt;int&gt;( keywords );
+var text = "we are all champions";
+matcher.ParseText(text, (hit) =&gt; {
+  Console.WriteLine("Matched: {0} = {1}", text.Substring(hit.Begin, hit.Length), hit.Value );
 });
-</PackageReleaseNotes>		
+</PackageReleaseNotes>
     <PackageIconUrl>https://www.nrecosite.com/img/nreco-logo-200.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/nreco/AhoCorasickDoubleArrayTrie</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/nreco/AhoCorasickDoubleArrayTrie/master/LICENSE</PackageLicenseUrl>
-    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.3' ">1.6.0</NetStandardImplicitPackageVersion>
     <RootNamespace>NReco.Text</RootNamespace>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
-    <Reference Include="System" />
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <PackageReference Include="System.Data.Common" Version="4.3.0" />
+    <PackageReference Include="System.Reflection" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Primitives" Version="4.3.0" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <PackageReference Include="System.Data.Common" Version="4.1.0" />
-	<PackageReference Include="System.Reflection" Version="4.1.0" />
-    <PackageReference Include="System.Reflection.Primitives" Version="4.0.1" />	
-  </ItemGroup>
-  
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <DefineConstants>$(DefineConstants);NET_STANDARD</DefineConstants>
   </PropertyGroup>
-  
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.3|AnyCPU'">
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  
-  
 </Project>
