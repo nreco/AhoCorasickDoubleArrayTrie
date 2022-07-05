@@ -2,12 +2,12 @@
 
   <PropertyGroup>
     <Description>Very fast C# implementation of Aho Corasick algorithm based on Double Array Trie: efficient text search of many substrings with O(n) complexity. Automata state may be efficiently serialized to binary stream.</Description>
-    <Copyright>Copyright (c) 2017-2019 Vitalii Fedorchenko</Copyright>
+    <Copyright>Copyright (c) 2017-2022 Vitalii Fedorchenko and contributors</Copyright>
     <AssemblyTitle>NReco.Text.AhoCorasickDoubleArrayTrie</AssemblyTitle>
     <Title>Fast Aho Corasick algorithm based on Double Array Trie.</Title>
-    <VersionPrefix>1.0.2</VersionPrefix>
+    <VersionPrefix>1.1.0</VersionPrefix>
     <Authors>Vitalii Fedorchenko</Authors>
-    <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>NReco.Text.AhoCorasickDoubleArrayTrie</AssemblyName>
     <AssemblyOriginatorKeyFile>NReco.Text.AhoCorasickDoubleArrayTrie.snk</AssemblyOriginatorKeyFile>
@@ -28,16 +28,7 @@ matcher.ParseText(text, (hit) =&gt; {
     <PackageLicenseUrl>https://raw.githubusercontent.com/nreco/AhoCorasickDoubleArrayTrie/master/LICENSE</PackageLicenseUrl>
     <RootNamespace>NReco.Text</RootNamespace>
     <NoWarn>1591</NoWarn>
-  </PropertyGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="System.Data.Common" Version="4.3.0" />
-    <PackageReference Include="System.Reflection" Version="4.3.0" />
-    <PackageReference Include="System.Reflection.Primitives" Version="4.3.0" />
-  </ItemGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <DefineConstants>$(DefineConstants);NET_STANDARD</DefineConstants>
+	<LangVersion>9.0</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">

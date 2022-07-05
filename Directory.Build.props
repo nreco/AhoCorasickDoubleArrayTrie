@@ -1,6 +1,0 @@
-<Project>
-  <PropertyGroup>
-    <Features>strict</Features>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-</Project>

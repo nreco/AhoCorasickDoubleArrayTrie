@@ -20,7 +20,7 @@ namespace NReco.Text {
 		// A builder to build the AhoCorasickDoubleArrayTrie
 		private class Builder {
 			// the root state of trie
-			private State rootState = new();
+			private State rootState = new State();
 
 			// whether the position has been used
 			private bool[] used;
@@ -60,7 +60,7 @@ namespace NReco.Text {
 			/// <returns>the amount of the siblings</returns>
 			private static int Fetch(State parent, IList<KeyValuePair<int, State>> siblings) {
 				if (parent.IsAcceptable) {
-					State fakeNode = new(-(parent.Depth + 1));
+					State fakeNode = new State(-(parent.Depth + 1));
 					fakeNode.AddEmit(parent.LargestValueId);
 					siblings.Add(new KeyValuePair<int, State>(0, fakeNode));
 				}
