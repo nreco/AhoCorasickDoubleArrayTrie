@@ -1,7 +1,8 @@
 # NReco.Text.AhoCorasickDoubleArrayTrie
 Very fast C# implementation of Aho Corasick algorithm based on Double Array Trie: efficient text search of many substrings with O(n) complexity.
 
-[![NuGet Release](https://img.shields.io/nuget/v/NReco.Text.AhoCorasickDoubleArrayTrie.svg)](https://www.nuget.org/packages/NReco.Text.AhoCorasickDoubleArrayTrie/)
+[![NuGet Release](https://img.shields.io/nuget/v/NReco.Text.AhoCorasickDoubleArrayTrie.svg)](https://www.nuget.org/packages/NReco.Text.AhoCorasickDoubleArrayTrie/) | ![Tests](https://github.com/nreco/AhoCorasickDoubleArrayTrie/actions/workflows/dotnet-test.yml/badge.svg)
+
 
 * very fast: can be used for efficient substring search of thousands keywords with O(n) complexity.
 * trie represented with double array approach to minimize memory usage
