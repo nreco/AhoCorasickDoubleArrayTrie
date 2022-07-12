@@ -1,4 +1,4 @@
-﻿/*
+/*
  *  Copyright 2017 Vitalii Fedorchenko
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -75,10 +75,10 @@ namespace NReco.Text {
 		/// </summary>
 		/// <param name="text">The text</param>
 		/// <returns>a list of matches</returns>
-		public IList<Hit> ParseText(string text) {
+		public List<Hit> ParseText(string text) {
 			int position = 1;
 			int currentState = 0;
-			IList<Hit> collectedEmits = new List<Hit>();
+			List<Hit> collectedEmits = new List<Hit>();
 			bool ignoreCase = this.ignoreCase;
 			for (int i = 0; i < text.Length; ++i) {
 				char character = text[i];
@@ -280,7 +280,7 @@ namespace NReco.Text {
 		}
 
 		// store output
-		private void StoreEmits(int position, int currentState, IList<Hit> collectedEmits) {
+		private void StoreEmits(int position, int currentState, List<Hit> collectedEmits) {
 			int[] hitArray = this.output[currentState];
 			if (hitArray != null) {
 				foreach (int hit in hitArray) {
